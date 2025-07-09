@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Encryption UI</title>
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+</head>
+<body class="container py-5">
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>🔐 Encrypt Plain Text</h2>
+    <a href="/home" class="btn btn-outline-secondary">🏠 Home</a>
+</div>
+
+<form method="post" action="/encryption/encrypt" class="mb-4">
+    <div class="mb-3">
+        <label for="plainText" class="form-label">Plain Text:</label>
+        <input type="text" class="form-control" name="plainText" id="plainText"
+               th:value="${plainText}">
+    </div>
+
+    <div class="mb-3">
+        <label for="algorithm" class="form-label">Select Algorithm:</label>
+        <select name="algorithm" class="form-select">
+            <option value="bcrypt" th:selected="${algorithm == 'bcrypt'}">BCrypt</option>
+            <option value="scrypt" th:selected="${algorithm == 'scrypt'}">SCrypt</option>
+            <option value="pbkdf2" th:selected="${algorithm == 'pbkdf2'}">PBKDF2</option>
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Encrypt</button>
+</form>
+
+<div th:if="${encrypted}">
+    <div class="mb-3">
+        <label class="form-label">Cipher Text:</label>
+        <textarea class="form-control" readonly rows="3"
+                  th:text="${cipherText}"></textarea>
+    </div>
+
+    <h4 class="mt-4">🔍 Validate Match</h4>
+    <form method="post" action="/encryption/validate">
+        <input type="hidden" name="cipherText" th:value="${cipherText}"/>
+        <input type="hidden" name="algorithm" th:value="${algorithm}"/>
+
+        <div class="mb-3">
+            <label class="form-label">Enter Plain Text Again:</label>
+            <input type="text" class="form-control" name="plainText"/>
+        </div>
+
+        <button type="submit" class="btn btn-warning">Validate</button>
+    </form>
+</div>
+
+<div th:if="${matchResult}" class="alert alert-info mt-4">
+    <strong th:text="${matchResult}"></strong>
+</div>
+
+</body>
+</html>
